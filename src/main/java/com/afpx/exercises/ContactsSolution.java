@@ -5,49 +5,46 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class ContactsSolution {
+    static class TrieNode {
+        private HashMap<Character, TrieNode> subNodes = new HashMap<>();
+        public int hits;
+
+        public void putIfAbsent(char ch) {
+            subNodes.putIfAbsent(ch, new TrieNode());
+        }
+
+        public TrieNode getChild(char ch) {
+            return subNodes.get(ch);
+        }
+    }
+
     static class SimpleWordTrie {
-        private HashMap<Character, SimpleWordTrie> subNodes = new HashMap<>();
-        private HashMap<Character, String> subNodeStrings = new HashMap<>();
-        int count;
+        TrieNode root = new TrieNode();
 
-        void add(String item) {
-            count++;
-            if(item.isEmpty()) {
-                return;
-            }
+        SimpleWordTrie() {
+        }
 
-            char c = item.charAt(0);
-            String subString = item.substring(1);
-
-            // If the sub trie already exists, use it
-            if(subNodes.containsKey(c)) {
-                subNodes.get(c).add(subString);
-            }
-            // if the subString already exists, replace the subString with a trie and add the new one.
-            // (the subString is an optimization to avoid having to create an entire tree for only a single item)
-            else if(subNodeStrings.containsKey(c)) {
-                SimpleWordTrie subTrie = new SimpleWordTrie();
-                subTrie.add(subNodeStrings.remove(c));
-                subTrie.add(subString);
-                subNodes.put(c, subTrie);
-            }
-            else {
-                subNodeStrings.put(c, subString);
+        public void add(String str) {
+            TrieNode curr = root;
+            for (int i = 0; i < str.length(); i++) {
+                Character ch = str.charAt(i);
+                curr.putIfAbsent(ch);
+                curr = curr.getChild(ch);
+                curr.hits++;
             }
         }
 
-        int getMatchCount(String item) {
-            if(item.isEmpty()) {
-                return count;
+        public int getPrefixHits(String prefix) {
+            TrieNode ithNode = root;
+
+            for (int i = 0; i < prefix.length(); i++) {
+                Character ithChar = prefix.charAt(i);
+                ithNode = ithNode.getChild(ithChar);
+                if (ithNode == null) {
+                    return 0;
+                }
             }
-            char c = item.charAt(0);
-            if(subNodeStrings.containsKey(c) && subNodeStrings.get(c).equals(item.substring(1))) {
-                return 1;
-            }
-            if(subNodes.containsKey(c)) {
-                return subNodes.get(c).getMatchCount(item.substring(1));
-            }
-            return 0;
+            return ithNode.hits;
         }
     }
 
@@ -55,12 +52,12 @@ public class ContactsSolution {
         Scanner in = new Scanner(System.in);
         int n = in.nextInt();
         SimpleWordTrie trie = new SimpleWordTrie();
-        for(int a0 = 0; a0 < n; a0++){
+        for (int i = 0; i < n; i++) {
             String op = in.next();
             String contact = in.next();
-            switch(op) {
+            switch (op) {
                 case "find":
-                    System.out.println(trie.getMatchCount(contact));
+                    System.out.println(trie.getPrefixHits(contact));
                     break;
                 case "add":
                     trie.add(contact);
