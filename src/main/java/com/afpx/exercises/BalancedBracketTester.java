@@ -7,40 +7,39 @@ import java.util.Stack;
 
 public class BalancedBracketTester {
     public static boolean isBalanced(String line) {
-        int unmatched = 0;
+        if(line.length() % 2 != 0) {
+            return false;
+        }
+
         Deque<Character> tokenStack = new ArrayDeque<>();
         for (int j = 0; j < line.length(); j++) {
             char c = line.charAt(j);
             switch (c) {
                 case '}':
-                    if(!tokenStack.isEmpty() && tokenStack.peek().equals('{')) {
-                        tokenStack.pop();
-                        unmatched--;
+                    if(tokenStack.isEmpty() || !tokenStack.pop().equals('{')) {
+                        return false;
                     }
                     break;
                 case ']':
-                    if(!tokenStack.isEmpty() && tokenStack.peek().equals('[')) {
-                        tokenStack.pop();
-                        unmatched--;
+                    if(tokenStack.isEmpty() || !tokenStack.pop().equals('[')) {
+                        return false;
                     }
                     break;
                 case ')':
-                    if(!tokenStack.isEmpty() && tokenStack.peek().equals('(')) {
-                        tokenStack.pop();
-                        unmatched--;
+                    if(tokenStack.isEmpty() || !tokenStack.pop().equals('(')) {
+                        return false;
                     }
                     break;
                 case '{':
                 case '(':
                 case '[':
                     tokenStack.push(c);
-                    unmatched++;
                     break;
                 default:
                     break;
             }
         }
-        return unmatched == 0;
+        return tokenStack.isEmpty();
     }
 
     static void run() {
