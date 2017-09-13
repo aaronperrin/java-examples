@@ -4,14 +4,11 @@ import java.util.*;
 
 public class CoinMachine {
 
-
-
+    private HashMap<Integer, ArrayList<Integer>> cache = new HashMap<>();
     private NavigableSet<Integer> coins = new TreeSet<>();
 
-    public ArrayList<Integer> findLargestFactors(int targetSum) {
-        ArrayList<Integer> factors = new ArrayList<>();
-        findFactors(factors, targetSum, coins);
-        return factors;
+    public List<Integer> findLargestFactors(int targetSum) {
+        return findFactors(targetSum, coins);
     }
 
 //    public ArrayList<ArrayList<Integer>> findAllFactors(int targetSum) {
@@ -25,7 +22,10 @@ public class CoinMachine {
 //        }
 //    }
 
-    private boolean findFactors(ArrayList<Integer> outFactors, int targetSum, NavigableSet<Integer> possibleFactors) {
+    private List<Integer> findFactors(int targetSum, NavigableSet<Integer> possibleFactors) {
+        if(cache.containsKey(targetSum)) {
+            return cache.get(targetSum);
+        }
         // Limit the set of factors to only those that are less than the targetSum
         NavigableSet<Integer> subFactors = possibleFactors.headSet(targetSum, true);
         Iterator<Integer> iterator = subFactors.descendingIterator();
@@ -33,19 +33,20 @@ public class CoinMachine {
             int factor = iterator.next();
             // If the factor equals the target, then the solution has been found
             if(factor == targetSum) {
-                outFactors.add(factor);
-                return true;
+                ArrayList<Integer> factors = new ArrayList<>();
+                factors.add(factor);
+                return factors;
             }
             int nextTarget = targetSum - factor;
-            boolean hasSolution = findFactors(outFactors, nextTarget, subFactors);
-            if(hasSolution) {
-                outFactors.add(factor);
-                return true;
+            List<Integer> factors = findFactors(nextTarget, subFactors);
+            if(!factors.isEmpty()) {
+                factors.add(factor);
+                return factors;
             }
         }
 
         // If there are no suitable factors left, then this path is invalid.
-        return false;
+        return Collections.emptyList();
     }
 
     public static void main(String[] args) {
@@ -56,7 +57,7 @@ public class CoinMachine {
         for (int i = 0; i < coinCount; i++) {
             cm.addCoin(in.nextInt());
         }
-        ArrayList<Integer> largestFactors = cm.findLargestFactors(target);
+        List<Integer> largestFactors = cm.findLargestFactors(target);
         System.out.println(largestFactors);
     }
 
