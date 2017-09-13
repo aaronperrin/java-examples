@@ -1,14 +1,53 @@
 package com.afpx.exercises;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CoinMachine {
 
-    private HashMap<Integer, ArrayList<Integer>> cache = new HashMap<>();
+    interface Factors {
+
+    }
+
+    static class CompositeFactors implements Factors {
+        List<Factors> factors = new ArrayList<>();
+
+        public CompositeFactors(Factors factors, int factor) {
+            this.factors.add(factors);
+            this.factors.add(new SingleFactor(factor));
+        }
+
+        @Override
+        public String toString() {
+            return factors.stream().map(Factors::toString).collect(Collectors.joining(","));
+        }
+    }
+
+    static class SingleFactor implements Factors {
+        int value;
+
+        public SingleFactor(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(value);
+        }
+    }
+
+    static class NullFactor implements Factors {
+        @Override
+        public String toString() {
+            return "";
+        }
+    }
+
+    private HashMap<Integer, Factors> cache = new HashMap<>();
     private NavigableSet<Integer> coins = new TreeSet<>();
 
-    public List<Integer> findLargestFactors(int targetSum) {
-        return findFactors(targetSum, coins);
+    public Optional<Factors> findLargestFactors(int targetSum) {
+        return Optional.ofNullable(findFactors(targetSum, coins));
     }
 
 //    public ArrayList<ArrayList<Integer>> findAllFactors(int targetSum) {
@@ -22,7 +61,7 @@ public class CoinMachine {
 //        }
 //    }
 
-    private List<Integer> findFactors(int targetSum, NavigableSet<Integer> possibleFactors) {
+    private Factors findFactors(int targetSum, NavigableSet<Integer> possibleFactors) {
         if(cache.containsKey(targetSum)) {
             return cache.get(targetSum);
         }
@@ -33,20 +72,22 @@ public class CoinMachine {
             int factor = iterator.next();
             // If the factor equals the target, then the solution has been found
             if(factor == targetSum) {
-                ArrayList<Integer> factors = new ArrayList<>();
-                factors.add(factor);
+                Factors factors = new SingleFactor(factor);
+                cache.put(targetSum, factors);
                 return factors;
             }
             int nextTarget = targetSum - factor;
-            List<Integer> factors = findFactors(nextTarget, subFactors);
-            if(!factors.isEmpty()) {
-                factors.add(factor);
+            Factors factors = findFactors(nextTarget, subFactors);
+            if(factors != null) {
+                factors = new CompositeFactors(factors, factor);
+                cache.put(targetSum, factors);
                 return factors;
             }
         }
 
         // If there are no suitable factors left, then this path is invalid.
-        return Collections.emptyList();
+        cache.put(targetSum, null);
+        return null;
     }
 
     public static void main(String[] args) {
@@ -57,13 +98,14 @@ public class CoinMachine {
         for (int i = 0; i < coinCount; i++) {
             cm.addCoin(in.nextInt());
         }
-        List<Integer> largestFactors = cm.findLargestFactors(target);
+        Optional<Factors> largestFactors = cm.findLargestFactors(target);
         System.out.println(largestFactors);
     }
 
     public void addCoin(int value) {
         if(!coins.contains(value)) {
             coins.add(value);
+            cache.put(value, new SingleFactor(value));
         }
     }
 }

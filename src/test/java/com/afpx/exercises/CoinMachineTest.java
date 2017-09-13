@@ -4,10 +4,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.HashMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -18,9 +15,8 @@ public class CoinMachineTest {
     public void simpleSingleFactor() throws Exception {
         CoinMachine cm = new CoinMachine();
         cm.addCoin(1);
-        List<Integer> largestFactors = cm.findLargestFactors(1);
-        assertEquals(1, largestFactors.size());
-        assertThat(largestFactors.get(0), is(1));
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(1);
+        assertThat(largestFactors.get().toString(), is("1"));
     }
 
     /*
@@ -95,9 +91,8 @@ public class CoinMachineTest {
         cm.addCoin(6);
         cm.addCoin(7);
         cm.addCoin(9);
-        List<Integer> largestFactors = cm.findLargestFactors(20);
-        String result = largestFactors.stream().map(Object::toString).collect(Collectors.joining(","));
-        assertThat(result, is("6,7,7"));
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(20);
+        assertThat(largestFactors.get().toString(), is("6,7,7"));
     }
 
     /*
@@ -119,9 +114,8 @@ public class CoinMachineTest {
         cm.addCoin(6);
         cm.addCoin(7);
         cm.addCoin(9);
-        List<Integer> largestFactors = cm.findLargestFactors(25);
-        String result = largestFactors.stream().map(Object::toString).collect(Collectors.joining(","));
-        assertThat(result, is("7,9,9"));
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(25);
+        assertThat(largestFactors.get().toString(), is("7,9,9"));
     }
 
     /*
@@ -138,9 +132,8 @@ public class CoinMachineTest {
         cm.addCoin(6);
         cm.addCoin(7);
         cm.addCoin(9);
-        List<Integer> largestFactors = cm.findLargestFactors(9);
-        String result = largestFactors.stream().map(Object::toString).collect(Collectors.joining(","));
-        assertThat(result, is("9"));
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(9);
+        assertThat(largestFactors.get().toString(), is("9"));
     }
 
     /*
@@ -170,8 +163,7 @@ public class CoinMachineTest {
         cm.addCoin(6);
         cm.addCoin(7);
         cm.addCoin(9);
-        List<Integer> largestFactors = cm.findLargestFactors(8);
-        String result = largestFactors.stream().map(Object::toString).collect(Collectors.joining(","));
-        assertThat(result, is(""));
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(8);
+        assertThat(largestFactors.isPresent(), is(false));
     }
 }
