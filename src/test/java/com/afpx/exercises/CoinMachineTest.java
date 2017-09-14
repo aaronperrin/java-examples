@@ -1,11 +1,8 @@
 package com.afpx.exercises;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -165,5 +162,51 @@ public class CoinMachineTest {
         cm.addCoin(9);
         Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(8);
         assertThat(largestFactors.isPresent(), is(false));
+    }
+
+    /*
+    {1, 2, 3, 4}
+    1 -> {1}
+    2 -> {2}, {1, 1}
+    5 -> {1, 4}, {1, 2, 2}, {1, 1, 1, 2}, {1, 1, 1, 1, 1}
+     */
+    @Test
+    public void testAllFactors1() throws Exception {
+        CoinMachine cm = new CoinMachine();
+        cm.addCoin(1);
+        cm.addCoin(2);
+        cm.addCoin(3);
+        cm.addCoin(4);
+        NavigableSet<CoinMachine.Factors> allFactors = cm.findAllFactors(1);
+        assertThat(allFactors.first().toString(), is("1"));
+    }
+    /*
+    {1, 2, 3, 4}
+    2 -> {2}, {1, 1}
+    5 -> {1, 4}, {1, 2, 2}, {1, 1, 1, 2}, {1, 1, 1, 1, 1}
+     */
+    @Test
+    public void testAllFactors2() throws Exception {
+        CoinMachine cm = new CoinMachine();
+        cm.addCoin(1);
+        cm.addCoin(2);
+        cm.addCoin(3);
+        cm.addCoin(4);
+        NavigableSet<CoinMachine.Factors> allFactors = cm.findAllFactors(2);
+        int i = 0;
+        for (CoinMachine.Factors factors : allFactors) {
+            switch (i) {
+                case 0:
+                    assertThat(factors.toString(), is("1,1"));
+                    break;
+                case 1:
+                    assertThat(factors.toString(), is("2"));
+                    break;
+                default:
+                    fail();
+            }
+            i++;
+        }
+
     }
 }
