@@ -1,9 +1,6 @@
 package com.afpx.exercises.cards.simple;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Represents a 'poker-like' deck of cards. That is, it contains a ordered list of cards, initially un-shuffled.
@@ -51,5 +48,14 @@ public class Deck {
             return Optional.empty();
         }
         return Optional.of(cards.get(topCard++));
+    }
+
+    @Override
+    public String toString() {
+        // Conversion
+        return "Deck{" +
+                "cards=" + cards.toString() +
+                ", topCard=" + topCard +
+                '}';
     }
 }
