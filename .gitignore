@@ -135,6 +135,3 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
-gradle/
-gradlew
-gradlew.bat
