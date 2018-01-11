@@ -17,6 +17,15 @@ public class DeckTest {
     }
 
     @Test
+    public void noCardIsDealtAfter52() throws Exception {
+        Deck d = new Deck();
+        for(int i = 0; i < 52; i++) {
+            assertTrue("A deck should have 52 cards", d.dealOneCard().isPresent());
+        }
+        assertFalse("No card should be returned when all cards have been dealt", d.dealOneCard().isPresent());
+    }
+
+    @Test
     public void newDeckHasAllCards() throws Exception {
         Deck d = new Deck();
         Set<Card> testSet = new HashSet<>();
