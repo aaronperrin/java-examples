@@ -27,11 +27,11 @@ public class Deck {
 
     /**
      * Shuffles the cards using a simple algorithm. Probably needs more work depending on how this class will be used.
-     * TODO: revise algorithm based on consumer requirements
+     * TODO: revise algorithm based on consumer requirements (e.g. does it need to be shuffled better?)
      */
     public void shuffle() {
         Random random = new Random();
-        for(int i = 0; i < cards.size() / 2; i++) {
+        for(int i = 0; i < cards.size(); i++) {
             // just swap a card with another random card in the deck
             Card tmp = cards.get(i);
             int randomCardIndex = random.nextInt(cards.size());
