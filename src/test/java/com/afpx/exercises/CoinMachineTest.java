@@ -93,6 +93,7 @@ public class CoinMachineTest {
     }
 
     /*
+        coins = {3, 6, 7. 9}
         target0 = 25
         current0 = 9
             target1 = target0 - current0 = 16
@@ -165,10 +166,8 @@ public class CoinMachineTest {
     }
 
     /*
-    {1, 2, 3, 4}
+    {1, 2, 3, 4, 5, 6}
     1 -> {1}
-    2 -> {2}, {1, 1}
-    5 -> {1, 4}, {1, 2, 2}, {1, 1, 1, 2}, {1, 1, 1, 1, 1}
      */
     @Test
     public void testAllFactors1() throws Exception {
@@ -177,36 +176,72 @@ public class CoinMachineTest {
         cm.addCoin(2);
         cm.addCoin(3);
         cm.addCoin(4);
-        NavigableSet<CoinMachine.Factors> allFactors = cm.findAllFactors(1);
-        assertThat(allFactors.first().toString(), is("1"));
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(1);
+        assertThat(largestFactors.get().toString(), is("1"));
     }
+
     /*
-    {1, 2, 3, 4}
-    2 -> {2}, {1, 1}
-    5 -> {1, 4}, {1, 2, 2}, {1, 1, 1, 2}, {1, 1, 1, 1, 1}
+    {1, 2, 3, 4, 5, 6}
+    2 -> {2}. {1. 1}
      */
     @Test
-    public void testAllFactors2() throws Exception {
+    public void testAllFactorsAA() throws Exception {
         CoinMachine cm = new CoinMachine();
         cm.addCoin(1);
         cm.addCoin(2);
         cm.addCoin(3);
         cm.addCoin(4);
-        NavigableSet<CoinMachine.Factors> allFactors = cm.findAllFactors(2);
-        int i = 0;
-        for (CoinMachine.Factors factors : allFactors) {
-            switch (i) {
-                case 0:
-                    assertThat(factors.toString(), is("1,1"));
-                    break;
-                case 1:
-                    assertThat(factors.toString(), is("2"));
-                    break;
-                default:
-                    fail();
-            }
-            i++;
-        }
-
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(1);
+        assertThat(largestFactors.get().toString(), is("1" + System.lineSeparator() + "1,1"));
     }
+
+    /*
+    {1, 2, 3, 4, 5, 6}
+    3 ->
+        2 ->
+            1
+            1
+        1
+    strategy: print leafs, then step up, print
+     */
+    @Test
+    public void testAllFactorsAB() throws Exception {
+        CoinMachine cm = new CoinMachine();
+        cm.addCoin(1);
+        cm.addCoin(2);
+        cm.addCoin(3);
+        cm.addCoin(4);
+        Optional<CoinMachine.Factors> largestFactors = cm.findLargestFactors(1);
+        assertThat(largestFactors.get().toString(), is("1" + System.lineSeparator() + "1,1"));
+    }
+
+//    /*
+//    {1, 2, 3, 4}
+//    2 -> {2}, {1, 1}
+//    5 -> {1, 4}, {1, 2, 2}, {1, 1, 1, 2}, {1, 1, 1, 1, 1}
+//     */
+//    @Test
+//    public void testAllFactors2() throws Exception {
+//        CoinMachine cm = new CoinMachine();
+//        cm.addCoin(1);
+//        cm.addCoin(2);
+//        cm.addCoin(3);
+//        cm.addCoin(4);
+//        NavigableSet<CoinMachine.Factors> allFactors = cm.findAllFactors(2);
+//        int i = 0;
+//        for (CoinMachine.Factors factors : allFactors) {
+//            switch (i) {
+//                case 0:
+//                    assertThat(factors.toString(), is("1,1"));
+//                    break;
+//                case 1:
+//                    assertThat(factors.toString(), is("2"));
+//                    break;
+//                default:
+//                    fail();
+//            }
+//            i++;
+//        }
+//
+//    }
 }
